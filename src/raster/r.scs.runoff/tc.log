@@ -1,0 +1,7 @@
+r.watershed elevation=dem drainage=fdr -s --overwrite
+r.flowaccumulation input=fdr@test format=45degree output=fac type=FCELL 
+r.mapcalc --overwrite "streams = if(! isnull(dem), 1, null())"
+r.stream.distance -o stream=streams direction=fdr elevation=dem method=upstream distance=flus difference=elev_diff --overwrite
+r.mapcalc --overwrite 'slope_local = if(flus > 0, elev_diff / flus, null())'
+r.mapcalc --overwrite 'tc = 0.01947 * pow(flus, 0.77) * pow(slope_local, -0.385)'
+
